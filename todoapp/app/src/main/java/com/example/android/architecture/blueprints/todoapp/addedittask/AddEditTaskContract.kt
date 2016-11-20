@@ -30,11 +30,11 @@ interface AddEditTaskContract {
 
         fun showTasksList()
 
-        fun setTitle(title: String)
+        fun setTitle(title: String?)
 
-        fun setDescription(description: String)
+        fun setDescription(description: String?)
 
-        val isActive: Boolean
+        fun isActive(): Boolean
     }
 
     interface Presenter : BasePresenter {
@@ -43,6 +43,6 @@ interface AddEditTaskContract {
 
         fun populateTask()
 
-        val isDataMissing: Boolean
+        fun isDataMissing(): Boolean
     }
 }

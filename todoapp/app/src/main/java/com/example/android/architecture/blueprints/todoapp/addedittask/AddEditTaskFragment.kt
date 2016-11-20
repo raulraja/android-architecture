@@ -65,15 +65,15 @@ class AddEditTaskFragment constructor() : Fragment(), AddEditTaskContract.View {
         activity.finish()
     }
 
-    override fun setTitle(title: String) {
+    override fun setTitle(title: String?) {
         mTitle.setText(title)
     }
 
-    override fun setDescription(description: String) {
+    override fun setDescription(description: String?) {
         mDescription.setText(description)
     }
 
-    override val isActive: Boolean get() = isAdded
+    override fun isActive(): Boolean = isAdded
 
     companion object {
 
