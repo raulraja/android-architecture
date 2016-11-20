@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package com.example.android.architecture.blueprints.todoapp;
+package com.example.android.architecture.blueprints.todoapp
 
-public interface BaseView<T> {
+interface BaseView<in T> {
 
-    void setPresenter(T presenter);
+    fun setPresenter(presenter: T)
 
 }

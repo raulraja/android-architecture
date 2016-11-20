@@ -163,7 +163,7 @@ public class TaskDetailFragment extends Fragment implements TaskDetailContract.V
     @Override
     public void showEditTask(@NonNull String taskId) {
         Intent intent = new Intent(getContext(), AddEditTaskActivity.class);
-        intent.putExtra(AddEditTaskFragment.ARGUMENT_EDIT_TASK_ID, taskId);
+        intent.putExtra(AddEditTaskFragment.Companion.getARGUMENT_EDIT_TASK_ID(), taskId);
         startActivityForResult(intent, REQUEST_EDIT_TASK);
     }
 

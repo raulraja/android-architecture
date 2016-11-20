@@ -73,7 +73,7 @@ class AddEditTaskActivity : AppCompatActivity() {
         mAddEditTaskPresenter = AddEditTaskPresenter(
                 taskId,
                 Injection.provideTasksRepository(applicationContext),
-                addEditTaskFragment!!,
+                addEditTaskFragment,
                 shouldLoadDataFromRepo)
 
         addEditTaskFragment.setPresenter(mAddEditTaskPresenter)
