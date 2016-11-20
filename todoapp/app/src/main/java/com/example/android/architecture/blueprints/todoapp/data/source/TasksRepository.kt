@@ -28,20 +28,20 @@ import java.util.*
  * obtained from the server, by using the remote data source only if the local database doesn't
  * exist or is empty.
  */
-class TasksRepository // Prevent direct instantiation.
+open class TasksRepository // Prevent direct instantiation.
 private constructor(val mTasksRemoteDataSource: TasksDataSource,
                     val mTasksLocalDataSource: TasksDataSource) : TasksDataSource {
 
     /**
      * This variable has package local visibility so it can be accessed from tests.
      */
-    internal val mCachedTasks: MutableMap<String, Task> = LinkedHashMap()
+    val mCachedTasks: MutableMap<String, Task> = LinkedHashMap()
 
     /**
      * Marks the cache as invalid, to force an update the next time data is requested. This variable
      * has package local visibility so it can be accessed from tests.
      */
-    internal var mCacheIsDirty = false
+    var mCacheIsDirty = false
 
     /**
      * Gets tasks from cache, local data source (SQLite) or remote data source, whichever is

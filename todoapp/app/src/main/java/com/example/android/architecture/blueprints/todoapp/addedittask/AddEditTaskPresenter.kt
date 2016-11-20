@@ -39,7 +39,7 @@ class AddEditTaskPresenter
  var shouldLoadDataFromRepo: Boolean) : AddEditTaskContract.Presenter, TasksDataSource.GetTaskCallback {
 
     override fun start() {
-        if (mTaskId == null && shouldLoadDataFromRepo) {
+        if (mTaskId != null && shouldLoadDataFromRepo) {
             populateTask()
         }
     }

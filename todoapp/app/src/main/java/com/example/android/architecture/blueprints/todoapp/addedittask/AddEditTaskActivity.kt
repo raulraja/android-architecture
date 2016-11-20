@@ -45,7 +45,7 @@ class AddEditTaskActivity : AppCompatActivity() {
         }
 
         var addEditTaskFragment: AddEditTaskFragment? =
-                supportFragmentManager.findFragmentById(R.id.contentFrame) as AddEditTaskFragment
+                supportFragmentManager.findFragmentById(R.id.contentFrame) as AddEditTaskFragment?
 
         val taskId = intent.getStringExtra(AddEditTaskFragment.ARGUMENT_EDIT_TASK_ID)
 
@@ -81,7 +81,7 @@ class AddEditTaskActivity : AppCompatActivity() {
 
     override fun onSaveInstanceState(outState: Bundle) {
         // Save the state so that next time we know if we need to refresh data.
-        outState.putBoolean(SHOULD_LOAD_DATA_FROM_REPO_KEY, mAddEditTaskPresenter.isDataMissing)
+        outState.putBoolean(SHOULD_LOAD_DATA_FROM_REPO_KEY, mAddEditTaskPresenter.isDataMissing())
         super.onSaveInstanceState(outState)
     }
 

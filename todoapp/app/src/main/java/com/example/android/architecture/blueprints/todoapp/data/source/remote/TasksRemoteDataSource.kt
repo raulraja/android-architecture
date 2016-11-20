@@ -112,7 +112,7 @@ private constructor() : TasksDataSource {
             addTask("Finish bridge in Tacoma", "Found awesome girders at half the cost!")
         }
 
-        val instance: TasksRemoteDataSource
+        @JvmStatic val instance: TasksRemoteDataSource
             get() {
                 if (INSTANCE == null) {
                     INSTANCE = TasksRemoteDataSource()

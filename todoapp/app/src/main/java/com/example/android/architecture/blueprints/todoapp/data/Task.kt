@@ -52,7 +52,7 @@ class Task
             UUID.randomUUID().toString(), completed) {
     }
 
-    val titleForList: String? get() = if (title?.isEmpty() ?: false) title else description
+    val titleForList: String? get() = if (title?.isNotEmpty() ?: false) title else description
 
     val isActive: Boolean get() = !isCompleted
 

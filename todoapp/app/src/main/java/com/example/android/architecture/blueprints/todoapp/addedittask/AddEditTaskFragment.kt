@@ -18,6 +18,7 @@ package com.example.android.architecture.blueprints.todoapp.addedittask
 
 import android.app.Activity
 import android.os.Bundle
+import android.support.design.widget.FloatingActionButton
 import android.support.design.widget.Snackbar
 import android.support.v4.app.Fragment
 import android.view.LayoutInflater
@@ -25,7 +26,6 @@ import android.view.View
 import android.view.ViewGroup
 import com.example.android.architecture.blueprints.todoapp.R
 import com.google.common.base.Preconditions.checkNotNull
-import kotlinx.android.synthetic.main.addtask_act.fab_edit_task_done as fab
 import kotlinx.android.synthetic.main.addtask_frag.add_task_description as mDescription
 import kotlinx.android.synthetic.main.addtask_frag.add_task_title as mTitle
 
@@ -49,6 +49,7 @@ class AddEditTaskFragment constructor() : Fragment(), AddEditTaskContract.View {
         super.onActivityCreated(savedInstanceState)
         setHasOptionsMenu(true)
 
+        val fab = activity.findViewById(R.id.fab_edit_task_done) as FloatingActionButton
         fab.setImageResource(R.drawable.ic_done)
         fab.setOnClickListener { mPresenter.saveTask(mTitle.text.toString(), mDescription.text.toString()) }
     }
