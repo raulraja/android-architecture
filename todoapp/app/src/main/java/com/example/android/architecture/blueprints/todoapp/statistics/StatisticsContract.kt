@@ -14,24 +14,26 @@
  * limitations under the License.
  */
 
-package com.example.android.architecture.blueprints.todoapp.tasks;
+package com.example.android.architecture.blueprints.todoapp.statistics
+
+import com.example.android.architecture.blueprints.todoapp.BasePresenter
+import com.example.android.architecture.blueprints.todoapp.BaseView
 
 /**
- * Used with the filter spinner in the tasks list.
+ * This specifies the contract between the view and the presenter.
  */
-public enum TasksFilterType {
-    /**
-     * Do not filter tasks.
-     */
-    ALL_TASKS,
+interface StatisticsContract {
 
-    /**
-     * Filters only the active (not completed yet) tasks.
-     */
-    ACTIVE_TASKS,
+    interface View : BaseView<Presenter> {
 
-    /**
-     * Filters only the completed tasks.
-     */
-    COMPLETED_TASKS
+        fun setProgressIndicator(active: Boolean)
+
+        fun showStatistics(numberOfIncompleteTasks: Int, numberOfCompletedTasks: Int)
+
+        fun showLoadingStatisticsError()
+
+        fun isActive(): Boolean
+    }
+
+    interface Presenter : BasePresenter
 }

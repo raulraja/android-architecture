@@ -14,28 +14,25 @@
  * limitations under the License.
  */
 
-package com.example.android.architecture.blueprints.todoapp.statistics;
+package com.example.android.architecture.blueprints.todoapp.util
 
-import com.example.android.architecture.blueprints.todoapp.BasePresenter;
-import com.example.android.architecture.blueprints.todoapp.BaseView;
+import android.support.test.espresso.IdlingResource
 
 /**
- * This specifies the contract between the view and the presenter.
+ * Contains a static reference to [IdlingResource], only available in the 'mock' build type.
  */
-public interface StatisticsContract {
+object EspressoIdlingResource {
+    private val RESOURCE = "GLOBAL"
 
-    interface View extends BaseView<Presenter> {
+    private val mCountingIdlingResource = SimpleCountingIdlingResource(RESOURCE)
 
-        void setProgressIndicator(boolean active);
-
-        void showStatistics(int numberOfIncompleteTasks, int numberOfCompletedTasks);
-
-        void showLoadingStatisticsError();
-
-        boolean isActive();
+    fun increment() {
+        mCountingIdlingResource.increment()
     }
 
-    interface Presenter extends BasePresenter {
-
+    fun decrement() {
+        mCountingIdlingResource.decrement()
     }
+
+    val idlingResource: IdlingResource get() = mCountingIdlingResource
 }

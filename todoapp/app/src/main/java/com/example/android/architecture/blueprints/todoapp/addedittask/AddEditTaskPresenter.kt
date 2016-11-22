@@ -35,8 +35,8 @@ class AddEditTaskPresenter
  * *
  * @param shouldLoadDataFromRepo whether data needs to be loaded or not (for config changes)
  */
-(private val mTaskId: String?, val mTasksRepository: TasksDataSource, val mAddTaskView: AddEditTaskContract.View,
- var shouldLoadDataFromRepo: Boolean) : AddEditTaskContract.Presenter, TasksDataSource.GetTaskCallback {
+(private val mTaskId: String?, private val mTasksRepository: TasksDataSource, private val mAddTaskView: AddEditTaskContract.View,
+ private var shouldLoadDataFromRepo: Boolean) : AddEditTaskContract.Presenter, TasksDataSource.GetTaskCallback {
 
     override fun start() {
         if (mTaskId != null && shouldLoadDataFromRepo) {
