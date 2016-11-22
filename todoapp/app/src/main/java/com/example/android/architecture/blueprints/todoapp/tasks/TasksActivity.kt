@@ -101,5 +101,5 @@ class TasksActivity : AppCompatActivity() {
         }
     }
 
-    val countingIdlingResource: IdlingResource @VisibleForTesting get() = EspressoIdlingResource.getIdlingResource()
+    val countingIdlingResource: IdlingResource @VisibleForTesting get() = EspressoIdlingResource.idlingResource
 }

@@ -71,8 +71,11 @@ class TasksFragment : Fragment(), TasksContract.View {
         mPresenter = presenter
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val root = inflater.inflate(R.layout.tasks_frag, container, false)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?) =
+            inflater.inflate(R.layout.tasks_frag, container, false)
+
+    override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
         // Set up tasks view
         listView.adapter = mListAdapter
@@ -96,8 +99,6 @@ class TasksFragment : Fragment(), TasksContract.View {
         swipeRefreshLayout.setOnRefreshListener { mPresenter.loadTasks(false) }
 
         setHasOptionsMenu(true)
-
-        return root
     }
 
     override fun onResume() {

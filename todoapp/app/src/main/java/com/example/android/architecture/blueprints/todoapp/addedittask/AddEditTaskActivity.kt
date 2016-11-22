@@ -87,7 +87,7 @@ class AddEditTaskActivity : AppCompatActivity() {
 
     val countingIdlingResource: IdlingResource
         @VisibleForTesting
-        get() = EspressoIdlingResource.getIdlingResource()
+        get() = EspressoIdlingResource.idlingResource
 
     companion object {
         val REQUEST_ADD_TASK = 1
