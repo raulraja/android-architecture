@@ -16,15 +16,12 @@
 
 package com.example.android.architecture.blueprints.todoapp.statistics
 
-
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import android.widget.TextView
 import com.example.android.architecture.blueprints.todoapp.R
-import kotlinx.android.synthetic.main.statistics_frag.view.statistics as mStatisticsTV
-
+import kotlinx.android.synthetic.main.statistics_frag.statistics as mStatisticsTV
 
 /**
  * Main UI for the statistics screen.
@@ -32,16 +29,13 @@ import kotlinx.android.synthetic.main.statistics_frag.view.statistics as mStatis
 class StatisticsFragment : Fragment(), StatisticsContract.View {
 
     lateinit var mPresenter: StatisticsContract.Presenter
-    private lateinit var mStatisticsTV: TextView
 
     override fun setPresenter(presenter: StatisticsContract.Presenter) {
         mPresenter = presenter
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?) =
-            inflater.inflate(R.layout.statistics_frag, container, false).apply {
-                this@StatisticsFragment.mStatisticsTV = this.mStatisticsTV
-            }
+            inflater.inflate(R.layout.statistics_frag, container, false)
 
     override fun onResume() {
         super.onResume()

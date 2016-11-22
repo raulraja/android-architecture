@@ -17,7 +17,6 @@
 package com.example.android.architecture.blueprints.todoapp.data
 
 import com.google.common.base.Objects
-import com.google.common.base.Strings
 import java.util.*
 
 /**
@@ -56,7 +55,7 @@ class Task
 
     val isActive: Boolean get() = !isCompleted
 
-    val isEmpty: Boolean get() = Strings.isNullOrEmpty(title) && Strings.isNullOrEmpty(description)
+    val isEmpty: Boolean get() = title.isNullOrEmpty() && description.isNullOrEmpty()
 
     override fun equals(other: Any?): Boolean = when {
         this === other -> true

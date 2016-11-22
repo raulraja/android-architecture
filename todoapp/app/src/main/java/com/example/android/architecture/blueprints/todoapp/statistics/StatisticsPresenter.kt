@@ -25,8 +25,8 @@ import com.example.android.architecture.blueprints.todoapp.util.EspressoIdlingRe
  * Listens to user actions from the UI ([StatisticsFragment]), retrieves the data and updates
  * the UI as required.
  */
-class StatisticsPresenter(val mTasksRepository: TasksRepository,
-                          val mStatisticsView: StatisticsContract.View) : StatisticsContract.Presenter {
+class StatisticsPresenter(private val mTasksRepository: TasksRepository,
+                          private val mStatisticsView: StatisticsContract.View) : StatisticsContract.Presenter {
 
     init {
         mStatisticsView.setPresenter(this)
