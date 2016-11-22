@@ -22,8 +22,8 @@ import android.support.test.espresso.IdlingResource
 import android.support.v7.app.AppCompatActivity
 import com.example.android.architecture.blueprints.todoapp.Injection
 import com.example.android.architecture.blueprints.todoapp.R
+import com.example.android.architecture.blueprints.todoapp.addFragmentToActivity
 import com.example.android.architecture.blueprints.todoapp.initFragment
-import com.example.android.architecture.blueprints.todoapp.util.ActivityUtils
 import com.example.android.architecture.blueprints.todoapp.util.EspressoIdlingResource
 import kotlinx.android.synthetic.main.addtask_act.*
 
@@ -56,7 +56,7 @@ class AddEditTaskActivity : AppCompatActivity() {
                     actionBar.setTitle(R.string.add_task)
                 }
 
-                ActivityUtils.addFragmentToActivity(supportFragmentManager, this, R.id.contentFrame)
+                addFragmentToActivity(this, R.id.contentFrame)
             }
         }
 

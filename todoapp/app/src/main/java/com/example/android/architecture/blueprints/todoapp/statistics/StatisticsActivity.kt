@@ -24,9 +24,9 @@ import android.support.v7.app.AppCompatActivity
 import android.view.MenuItem
 import com.example.android.architecture.blueprints.todoapp.Injection
 import com.example.android.architecture.blueprints.todoapp.R
+import com.example.android.architecture.blueprints.todoapp.addFragmentToActivity
 import com.example.android.architecture.blueprints.todoapp.initFragment
 import com.example.android.architecture.blueprints.todoapp.tasks.TasksActivity
-import com.example.android.architecture.blueprints.todoapp.util.ActivityUtils
 import kotlinx.android.synthetic.main.statistics_act.toolbar
 import kotlinx.android.synthetic.main.statistics_act.drawer_layout as mDrawerLayout
 import kotlinx.android.synthetic.main.statistics_act.nav_view as navigationView
@@ -55,9 +55,7 @@ class StatisticsActivity : AppCompatActivity() {
         setupDrawerContent(navigationView)
 
         val statisticsFragment = initFragment(R.id.contentFrame) {
-            StatisticsFragment.newInstance().apply {
-                ActivityUtils.addFragmentToActivity(supportFragmentManager, this, R.id.contentFrame)
-            }
+            StatisticsFragment.newInstance().apply { addFragmentToActivity(this, R.id.contentFrame) }
         }
 
         StatisticsPresenter(Injection.provideTasksRepository(applicationContext), statisticsFragment)
@@ -80,9 +78,11 @@ class StatisticsActivity : AppCompatActivity() {
                     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
                     startActivity(intent)
                 }
-                // Do nothing, we're already on that screen
-                R.id.statistics_navigation_menu_item -> { }
-                else -> { }
+            // Do nothing, we're already on that screen
+                R.id.statistics_navigation_menu_item -> {
+                }
+                else -> {
+                }
             }
             // Close the navigation drawer when an item is selected.
             menuItem.isChecked = true

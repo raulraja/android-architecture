@@ -20,8 +20,8 @@ import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import com.example.android.architecture.blueprints.todoapp.Injection
 import com.example.android.architecture.blueprints.todoapp.R
+import com.example.android.architecture.blueprints.todoapp.addFragmentToActivity
 import com.example.android.architecture.blueprints.todoapp.initFragment
-import com.example.android.architecture.blueprints.todoapp.util.ActivityUtils
 import kotlinx.android.synthetic.main.taskdetail_act.*
 
 /**
@@ -45,9 +45,7 @@ class TaskDetailActivity : AppCompatActivity() {
         val taskId = intent.getStringExtra(EXTRA_TASK_ID)
 
         val taskDetailFragment = initFragment(R.id.contentFrame) {
-            TaskDetailFragment.newInstance(taskId).apply {
-                ActivityUtils.addFragmentToActivity(supportFragmentManager, this, R.id.contentFrame)
-            }
+            TaskDetailFragment.newInstance(taskId).apply { addFragmentToActivity(this, R.id.contentFrame) }
         }
 
         // Create the presenter
