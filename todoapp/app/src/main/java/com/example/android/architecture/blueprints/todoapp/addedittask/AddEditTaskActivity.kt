@@ -48,19 +48,16 @@ class AddEditTaskActivity : AppCompatActivity() {
         val taskId = intent.getStringExtra(AddEditTaskFragment.ARGUMENT_EDIT_TASK_ID)
 
         val addEditTaskFragment: AddEditTaskFragment = initFragment(R.id.contentFrame) {
-            val fragment = AddEditTaskFragment.newInstance()
+            AddEditTaskFragment.newInstance().apply {
+                if (intent.hasExtra(AddEditTaskFragment.ARGUMENT_EDIT_TASK_ID)) {
+                    actionBar.setTitle(R.string.edit_task)
+                    this.arguments = Bundle().apply { putString(AddEditTaskFragment.ARGUMENT_EDIT_TASK_ID, taskId) }
+                } else {
+                    actionBar.setTitle(R.string.add_task)
+                }
 
-            if (intent.hasExtra(AddEditTaskFragment.ARGUMENT_EDIT_TASK_ID)) {
-                actionBar.setTitle(R.string.edit_task)
-                fragment.arguments = Bundle().apply { putString(AddEditTaskFragment.ARGUMENT_EDIT_TASK_ID, taskId) }
-            } else {
-                actionBar.setTitle(R.string.add_task)
+                ActivityUtils.addFragmentToActivity(supportFragmentManager, this, R.id.contentFrame)
             }
-
-            ActivityUtils.addFragmentToActivity(supportFragmentManager,
-                    fragment, R.id.contentFrame)
-
-            fragment
         }
 
         // Prevent the presenter from loading data from the repository if this is a config change.
