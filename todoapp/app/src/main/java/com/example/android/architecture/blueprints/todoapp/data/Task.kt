@@ -22,7 +22,7 @@ import java.util.*
 /**
  * Immutable model class for a Task.
  */
-class Task
+data class Task
 /**
  * Use this constructor to specify a completed Task if the Task already has an id (copy of
  * another Task).

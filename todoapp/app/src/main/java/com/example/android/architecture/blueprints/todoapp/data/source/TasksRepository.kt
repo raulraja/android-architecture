@@ -87,7 +87,7 @@ private constructor(val mTasksRemoteDataSource: TasksDataSource,
         mTasksRemoteDataSource.completeTask(task)
         mTasksLocalDataSource.completeTask(task)
 
-        val completedTask = Task(task.title, task.description, task.id, true)
+        val completedTask = task.copy(isCompleted = true)
 
         mCachedTasks.put(task.id, completedTask)
     }
@@ -100,7 +100,7 @@ private constructor(val mTasksRemoteDataSource: TasksDataSource,
         mTasksRemoteDataSource.activateTask(task)
         mTasksLocalDataSource.activateTask(task)
 
-        val activeTask = Task(task.title, task.description, task.id)
+        val activeTask = task.copy(isCompleted = false)
 
         mCachedTasks.put(task.id, activeTask)
     }
