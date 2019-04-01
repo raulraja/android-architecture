@@ -17,6 +17,8 @@
 package com.example.android.architecture.blueprints.todoapp.data.source
 
 import com.example.android.architecture.blueprints.todoapp.data.Task
+import com.example.android.architecture.blueprints.todoapp.data.TasksError
+import com.example.android.architecture.blueprints.todoapp.data.ZIO
 
 /**
  * Main entry point for accessing tasks data.
@@ -29,13 +31,6 @@ import com.example.android.architecture.blueprints.todoapp.data.Task
  */
 interface TasksDataSource {
 
-    interface LoadTasksCallback {
-
-        fun onTasksLoaded(tasks: List<Task>)
-
-        fun onDataNotAvailable()
-    }
-
     interface GetTaskCallback {
 
         fun onTaskLoaded(task: Task)
@@ -43,7 +38,7 @@ interface TasksDataSource {
         fun onDataNotAvailable()
     }
 
-    fun getTasks(callback: LoadTasksCallback)
+    fun getTasks(): ZIO<TasksError, List<Task>>
 
     fun getTask(taskId: String, callback: GetTaskCallback)
 

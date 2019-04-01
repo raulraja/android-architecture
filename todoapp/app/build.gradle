@@ -77,6 +77,10 @@ dependencies {
     implementation "androidx.room:room-runtime:$roomVersion"
     kapt "androidx.room:room-compiler:$roomVersion"
 
+    implementation "io.arrow-kt:arrow-core-data:$arrowVersion"
+    implementation "io.arrow-kt:arrow-optics:$arrowVersion"
+    implementation "io.arrow-kt:arrow-effects-io-extensions:$arrowVersion"
+
     // Dependencies for local unit tests
     testImplementation "junit:junit:$junitVersion"
     testImplementation "org.mockito:mockito-core:$mockitoVersion"

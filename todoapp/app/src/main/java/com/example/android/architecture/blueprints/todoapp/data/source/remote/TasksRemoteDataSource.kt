@@ -16,9 +16,14 @@
 package com.example.android.architecture.blueprints.todoapp.data.source.remote
 
 import android.os.Handler
+import arrow.core.right
 import com.example.android.architecture.blueprints.todoapp.data.Task
+import com.example.android.architecture.blueprints.todoapp.data.TasksError
+import com.example.android.architecture.blueprints.todoapp.data.ZIO
 import com.example.android.architecture.blueprints.todoapp.data.source.TasksDataSource
+import arrow.effects.extensions.io.fx.fx
 import com.google.common.collect.Lists
+import java.lang.Thread.sleep
 
 /**
  * Implementation of the data source that adds a latency simulating network.
@@ -44,12 +49,11 @@ object TasksRemoteDataSource : TasksDataSource {
      * source implementation, this would be fired if the server can't be contacted or the server
      * returns an error.
      */
-    override fun getTasks(callback: TasksDataSource.LoadTasksCallback) {
+    override fun getTasks(): ZIO<TasksError, List<Task>> = fx {
+        continueOn(NonBlocking)
         // Simulate network by delaying the execution.
-        val tasks = Lists.newArrayList(TASKS_SERVICE_DATA.values)
-        Handler().postDelayed({
-            callback.onTasksLoaded(tasks)
-        }, SERVICE_LATENCY_IN_MILLIS)
+        sleep(SERVICE_LATENCY_IN_MILLIS)
+        Lists.newArrayList(TASKS_SERVICE_DATA.values).right()
     }
 
     /**

@@ -22,6 +22,7 @@ import com.example.android.architecture.blueprints.todoapp.data.source.TasksData
 import com.example.android.architecture.blueprints.todoapp.data.source.TasksRepository
 import com.example.android.architecture.blueprints.todoapp.data.source.local.TasksLocalDataSource
 import com.example.android.architecture.blueprints.todoapp.data.source.local.ToDoDatabase
+import com.example.android.architecture.blueprints.todoapp.data.source.remote.TasksRemoteDataSource
 import com.example.android.architecture.blueprints.todoapp.util.AppExecutors
 
 /**
@@ -32,7 +33,9 @@ import com.example.android.architecture.blueprints.todoapp.util.AppExecutors
 object Injection {
     fun provideTasksRepository(context: Context): TasksRepository {
         val database = ToDoDatabase.getInstance(context)
-        return TasksRepository.getInstance(FakeTasksRemoteDataSource.getInstance(),
-                TasksLocalDataSource.getInstance(AppExecutors(), database.taskDao()))
+        return TasksRepository.getInstance(
+              TasksRemoteDataSource,
+              TasksLocalDataSource.getInstance(AppExecutors(), database.taskDao())
+        )
     }
 }

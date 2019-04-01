@@ -16,12 +16,17 @@
 package com.example.android.architecture.blueprints.todoapp.tasks
 
 import android.app.Activity
+import arrow.core.Either
+import arrow.effects.IO
+import arrow.effects.extensions.io.fx.fx
+import arrow.effects.extensions.io.unsafeRun.runBlocking
+import arrow.unsafe
 import com.example.android.architecture.blueprints.todoapp.addedittask.AddEditTaskActivity
 import com.example.android.architecture.blueprints.todoapp.data.Task
+import com.example.android.architecture.blueprints.todoapp.data.TasksError
 import com.example.android.architecture.blueprints.todoapp.data.source.TasksDataSource
 import com.example.android.architecture.blueprints.todoapp.data.source.TasksRepository
 import com.example.android.architecture.blueprints.todoapp.util.EspressoIdlingResource
-import java.util.ArrayList
 
 /**
  * Listens to user actions from the UI ([TasksFragment]), retrieves the data and updates the
@@ -45,7 +50,7 @@ class TasksPresenter(val tasksRepository: TasksRepository, val tasksView: TasksC
     override fun result(requestCode: Int, resultCode: Int) {
         // If a task was successfully added, show snackbar
         if (AddEditTaskActivity.REQUEST_ADD_TASK ==
-                requestCode && Activity.RESULT_OK == resultCode) {
+              requestCode && Activity.RESULT_OK == resultCode) {
             tasksView.showSuccessfullySavedMessage()
         }
     }
@@ -73,47 +78,57 @@ class TasksPresenter(val tasksRepository: TasksRepository, val tasksView: TasksC
         // that the app is busy until the response is handled.
         EspressoIdlingResource.increment() // App is busy until further notice
 
-        tasksRepository.getTasks(object : TasksDataSource.LoadTasksCallback {
-            override fun onTasksLoaded(tasks: List<Task>) {
-                val tasksToShow = ArrayList<Task>()
+        unsafe {
+            runBlocking {
+                tasksRepository.getTasks()
+                      .flatMap { result ->
+                          processResult(result, showLoadingUI)
+                      }
+            }
+        }
+    }
 
-                // This callback may be called twice, once for the cache and once for loading
-                // the data from the server API, so we check before decrementing, otherwise
-                // it throws "Counter has been corrupted!" exception.
-                if (!EspressoIdlingResource.countingIdlingResource.isIdleNow) {
-                    EspressoIdlingResource.decrement() // Set app as idle.
-                }
+    private fun processResult(
+          result: Either<TasksError, List<Task>>,
+          showLoadingUI: Boolean
+    ): IO<Unit> = fx {
+        //TODO continueOn(Main)
 
-                // We filter the tasks based on the requestType
-                for (task in tasks) {
-                    when (currentFiltering) {
-                        TasksFilterType.ALL_TASKS -> tasksToShow.add(task)
-                        TasksFilterType.ACTIVE_TASKS -> if (task.isActive) {
-                            tasksToShow.add(task)
-                        }
-                        TasksFilterType.COMPLETED_TASKS -> if (task.isCompleted) {
-                            tasksToShow.add(task)
-                        }
+        result.fold(ifRight = { tasks ->
+            val tasksToShow = ArrayList<Task>()
+            // This callback may be called twice, once for the cache and once for loading
+            // the data from the server API, so we check before decrementing, otherwise
+            // it throws "Counter has been corrupted!" exception.
+            if (!EspressoIdlingResource.countingIdlingResource.isIdleNow) {
+                EspressoIdlingResource.decrement() // Set app as idle.
+            }
+
+            // We filter the tasks based on the requestType
+            for (task in tasks) {
+                when (currentFiltering) {
+                    TasksFilterType.ALL_TASKS -> tasksToShow.add(task)
+                    TasksFilterType.ACTIVE_TASKS -> if (task.isActive) {
+                        tasksToShow.add(task)
+                    }
+                    TasksFilterType.COMPLETED_TASKS -> if (task.isCompleted) {
+                        tasksToShow.add(task)
                     }
                 }
-                // The view may not be able to handle UI updates anymore
-                if (!tasksView.isActive) {
-                    return
-                }
+            }
+            // The view may not be able to handle UI updates anymore
+            if (tasksView.isActive) {
+
                 if (showLoadingUI) {
                     tasksView.setLoadingIndicator(false)
                 }
-
                 processTasks(tasksToShow)
             }
-
-            override fun onDataNotAvailable() {
-                // The view may not be able to handle UI updates anymore
-                if (!tasksView.isActive) {
-                    return
-                }
+        }, ifLeft = {
+            // The view may not be able to handle UI updates anymore
+            if (tasksView.isActive) {
                 tasksView.showLoadingTasksError()
             }
+
         })
     }
 

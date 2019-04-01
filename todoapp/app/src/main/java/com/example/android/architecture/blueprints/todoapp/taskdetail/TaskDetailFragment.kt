@@ -45,7 +45,7 @@ class TaskDetailFragment : Fragment(), TaskDetailContract.View {
     
     override lateinit var presenter: TaskDetailContract.Presenter
 
-    override var isActive: Boolean = false
+    override val isActive: Boolean
         get() = isAdded
 
     override fun onResume() {

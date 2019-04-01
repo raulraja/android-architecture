@@ -16,6 +16,8 @@
 package com.example.android.architecture.blueprints.todoapp.data
 
 import androidx.annotation.VisibleForTesting
+import arrow.core.right
+import arrow.effects.extensions.io.fx.fx
 import com.example.android.architecture.blueprints.todoapp.data.source.TasksDataSource
 import com.google.common.collect.Lists
 
@@ -26,8 +28,8 @@ class FakeTasksRemoteDataSource private constructor() : TasksDataSource {
 
     private val TASKS_SERVICE_DATA = LinkedHashMap<String, Task>()
 
-    override fun getTasks(callback: TasksDataSource.LoadTasksCallback) {
-        callback.onTasksLoaded(Lists.newArrayList(TASKS_SERVICE_DATA.values))
+    override fun getTasks(): ZIO<TasksError, List<Task>> = fx {
+        Lists.newArrayList(TASKS_SERVICE_DATA.values).right()
     }
 
     override fun getTask(taskId: String, callback: TasksDataSource.GetTaskCallback) {

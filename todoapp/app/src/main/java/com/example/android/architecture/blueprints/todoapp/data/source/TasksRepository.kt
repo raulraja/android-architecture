@@ -15,7 +15,13 @@
  */
 package com.example.android.architecture.blueprints.todoapp.data.source
 
+import arrow.core.right
+import arrow.effects.liftIO
 import com.example.android.architecture.blueprints.todoapp.data.Task
+import com.example.android.architecture.blueprints.todoapp.data.TasksError
+import com.example.android.architecture.blueprints.todoapp.data.ZIO
+import com.example.android.architecture.blueprints.todoapp.data.doOnSuccess
+import com.example.android.architecture.blueprints.todoapp.data.handleErrorWith
 import java.util.ArrayList
 import java.util.LinkedHashMap
 
@@ -28,8 +34,8 @@ import java.util.LinkedHashMap
  * exist or is empty.
  */
 class TasksRepository(
-        val tasksRemoteDataSource: TasksDataSource,
-        val tasksLocalDataSource: TasksDataSource
+      val tasksRemoteDataSource: TasksDataSource,
+      val tasksLocalDataSource: TasksDataSource
 ) : TasksDataSource {
 
     /**
@@ -41,7 +47,7 @@ class TasksRepository(
      * Marks the cache as invalid, to force an update the next time data is requested. This variable
      * has package local visibility so it can be accessed from tests.
      */
-    var cacheIsDirty = false
+    private var cacheIsDirty = false
 
     /**
      * Gets tasks from cache, local data source (SQLite) or remote data source, whichever is
@@ -51,30 +57,17 @@ class TasksRepository(
      * Note: [TasksDataSource.LoadTasksCallback.onDataNotAvailable] is fired if all data sources fail to
      * get the data.
      */
-    override fun getTasks(callback: TasksDataSource.LoadTasksCallback) {
+    override fun getTasks(): ZIO<TasksError, List<Task>> = when {
         // Respond immediately with cache if available and not dirty
-        if (cachedTasks.isNotEmpty() && !cacheIsDirty) {
-            callback.onTasksLoaded(ArrayList(cachedTasks.values))
-            return
-        }
-
-        if (cacheIsDirty) {
-            // If the cache is dirty we need to fetch new data from the network.
-            getTasksFromRemoteDataSource(callback)
-        } else {
-            // Query the local storage if available. If not, query the network.
-            tasksLocalDataSource.getTasks(object : TasksDataSource.LoadTasksCallback {
-                override fun onTasksLoaded(tasks: List<Task>) {
-                    refreshCache(tasks)
-                    callback.onTasksLoaded(ArrayList(cachedTasks.values))
-                }
-
-                override fun onDataNotAvailable() {
-                    getTasksFromRemoteDataSource(callback)
-                }
-            })
-        }
+        cachedTasks.isNotEmpty() && !cacheIsDirty -> ArrayList(cachedTasks.values).right().liftIO()
+        // If the cache is dirty we need to fetch new data from the network.
+        cacheIsDirty -> getTasksFromRemoteDataSource()
+        // Query the local storage if available. If not, query the network.
+        else -> tasksLocalDataSource.getTasks()
+              .doOnSuccess(::refreshCache)
+              .handleErrorWith { getTasksFromRemoteDataSource() }
     }
+
 
     override fun saveTask(task: Task) {
         // Do in memory cache update to keep the app UI up to date
@@ -184,19 +177,11 @@ class TasksRepository(
         cachedTasks.remove(taskId)
     }
 
-    private fun getTasksFromRemoteDataSource(callback: TasksDataSource.LoadTasksCallback) {
-        tasksRemoteDataSource.getTasks(object : TasksDataSource.LoadTasksCallback {
-            override fun onTasksLoaded(tasks: List<Task>) {
-                refreshCache(tasks)
-                refreshLocalDataSource(tasks)
-                callback.onTasksLoaded(ArrayList(cachedTasks.values))
-            }
-
-            override fun onDataNotAvailable() {
-                callback.onDataNotAvailable()
-            }
-        })
-    }
+    private fun getTasksFromRemoteDataSource(): ZIO<TasksError, List<Task>> =
+          tasksRemoteDataSource.getTasks().doOnSuccess { tasks ->
+              refreshCache(tasks)
+              refreshLocalDataSource(tasks)
+          }
 
     private fun refreshCache(tasks: List<Task>) {
         cachedTasks.clear()
@@ -219,7 +204,7 @@ class TasksRepository(
         val cachedTask = Task(task.title, task.description, task.id).apply {
             isCompleted = task.isCompleted
         }
-        cachedTasks.put(cachedTask.id, cachedTask)
+        cachedTasks[cachedTask.id] = cachedTask
         perform(cachedTask)
     }
 
@@ -237,9 +222,9 @@ class TasksRepository(
          * @return the [TasksRepository] instance
          */
         @JvmStatic fun getInstance(tasksRemoteDataSource: TasksDataSource,
-                tasksLocalDataSource: TasksDataSource): TasksRepository {
+                                   tasksLocalDataSource: TasksDataSource): TasksRepository {
             return INSTANCE ?: TasksRepository(tasksRemoteDataSource, tasksLocalDataSource)
-                    .apply { INSTANCE = this }
+                  .apply { INSTANCE = this }
         }
 
         /**
@@ -251,3 +236,4 @@ class TasksRepository(
         }
     }
 }
+

@@ -16,7 +16,12 @@
 package com.example.android.architecture.blueprints.todoapp.data.source.local
 
 import androidx.annotation.VisibleForTesting
+import arrow.core.left
+import arrow.core.right
+import arrow.effects.extensions.io.fx.fx
 import com.example.android.architecture.blueprints.todoapp.data.Task
+import com.example.android.architecture.blueprints.todoapp.data.TasksError
+import com.example.android.architecture.blueprints.todoapp.data.ZIO
 import com.example.android.architecture.blueprints.todoapp.data.source.TasksDataSource
 import com.example.android.architecture.blueprints.todoapp.util.AppExecutors
 
@@ -33,17 +38,11 @@ class TasksLocalDataSource private constructor(
      * Note: [TasksDataSource.LoadTasksCallback.onDataNotAvailable] is fired if the database doesn't exist
      * or the table is empty.
      */
-    override fun getTasks(callback: TasksDataSource.LoadTasksCallback) {
-        appExecutors.diskIO.execute {
-            val tasks = tasksDao.getTasks()
-            appExecutors.mainThread.execute {
-                if (tasks.isEmpty()) {
-                    // This will be called if the table is new or just empty.
-                    callback.onDataNotAvailable()
-                } else {
-                    callback.onTasksLoaded(tasks)
-                }
-            }
+    override fun getTasks(): ZIO<TasksError, List<Task>> = fx {
+        val tasks = tasksDao.getTasks()
+        when {
+            tasks.isEmpty() -> TasksError.TasksNotAvailableError.left()
+            else -> tasks.right()
         }
     }
 
