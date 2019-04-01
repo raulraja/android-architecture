@@ -78,6 +78,7 @@ class TasksPresenter(val tasksRepository: TasksRepository, val tasksView: TasksC
         // that the app is busy until the response is handled.
         EspressoIdlingResource.increment() // App is busy until further notice
 
+        //TODO this would be better executed once by the view, in a "REDUX" way.
         unsafe {
             runBlocking {
                 tasksRepository.getTasks()
@@ -92,10 +93,11 @@ class TasksPresenter(val tasksRepository: TasksRepository, val tasksView: TasksC
           result: Either<TasksError, List<Task>>,
           showLoadingUI: Boolean
     ): IO<Unit> = fx {
-        //TODO continueOn(Main)
+        //TODO how to continueOn(Main) without explicit Coroutines dependency?
 
         result.fold(ifRight = { tasks ->
             val tasksToShow = ArrayList<Task>()
+
             // This callback may be called twice, once for the cache and once for loading
             // the data from the server API, so we check before decrementing, otherwise
             // it throws "Counter has been corrupted!" exception.

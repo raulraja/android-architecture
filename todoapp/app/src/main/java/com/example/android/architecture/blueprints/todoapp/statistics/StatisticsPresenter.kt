@@ -50,6 +50,7 @@ class StatisticsPresenter(
         // that the app is busy until the response is handled.
         EspressoIdlingResource.increment() // App is busy until further notice
 
+        //TODO this would be better executed once by the view, in a "REDUX" way.
         unsafe {
             runBlocking {
                 tasksRepository.getTasks().flatMap(::processResult)
